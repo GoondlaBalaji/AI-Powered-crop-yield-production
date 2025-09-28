@@ -169,3 +169,18 @@ Member 4 → Frontend Development
 
 Project developed for Hackathon GITAM 2025.
 Empowering farmers with data-driven crop decisions 🌱.
+
+## 📷 Sample Outputs
+
+### 🌐 Homepage (Frontend UI)
+![Homepage](./assets/homepage1.png)
+![Homepage](./assets/homepage2.png)
+![Homepage](./assets/homepage3.png)
+![Homepage](./assets/homepage4.png)
+![Homepage](./assets/homepage5.png)
+
+### 📊 Prediction Result Page
+![Prediction Result](./assets/prediction_result.png)
+
+### ⚡ API Demo in Postman
+![API Demo](./assets/api_demo.png)
