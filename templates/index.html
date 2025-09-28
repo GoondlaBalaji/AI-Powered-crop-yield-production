@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Yield Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&family=Montserrat:wght@400;700&display=swap');
+
+        body {
+            background-color: #f0fdf4;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        .header {
+            background: linear-gradient(90deg, #2d6a4f, #40916c);
+            color: white;
+            text-align: center;
+            padding: 40px 20px 35px 20px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0px 6px 20px rgba(0,0,0,0.25);
+            font-family: 'Roboto Slab', serif;
+            animation: fadeInDrop 1.3s ease forwards;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            letter-spacing: 1.5px;
+            animation: wave 3s ease-in-out infinite alternate;
+            display: inline-block;
+            cursor: default;
+        }
+        .header p {
+            font-size: 1.3rem;
+            margin: 0;
+            opacity: 0.9;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            animation: fadeInUp 1.8s ease forwards;
+            margin-top: 8px;
+        }
+
+        /* Language selector */
+        .language-selector {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 6px 10px;
+            color: #2d6a4f;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.15);
+        }
+
+        @keyframes wave {
+            0% { transform: translateY(0);}
+            100% { transform: translateY(10px);}
+        }
+        @keyframes fadeInDrop {
+            0% {opacity: 0; transform: translateY(-50px);}
+            100% {opacity: 1; transform: translateY(0);}
+        }
+        @keyframes fadeInUp {
+            0% {opacity: 0; transform: translateY(30px);}
+            100% {opacity: 1; transform: translateY(0);}
+        }
+
+        .form-card {
+            max-width: 1000px;
+            margin: 50px auto 30px auto;
+            background: white;
+            padding: 40px 45px 45px 45px;
+            border-radius: 25px;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease-in-out;
+            animation: fadeInUp 2s ease forwards;
+        }
+        .form-card:hover {
+            box-shadow: 0px 12px 30px rgba(0,0,0,0.15);
+        }
+        .accordion-button {
+            font-weight: 700;
+            color: #1b4332;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: transparent !important;
+            border: none !important;
+            transition: color 0.3s ease;
+        }
+        .accordion-button:hover {
+            color: #2d6a4f;
+        }
+        .accordion-button:focus {
+            box-shadow: none !important;
+        }
+        .accordion-button::after {
+            filter: invert(36%) sepia(29%) saturate(620%) hue-rotate(90deg);
+            transition: transform 0.3s ease;
+        }
+        .accordion-button.collapsed::after {
+            transform: rotate(-90deg);
+        }
+        .btn-predict {
+            background: #2d6a4f;
+            border: none;
+            padding: 16px 34px;
+            font-size: 22px;
+            border-radius: 18px;
+            color: white;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 15px rgb(45 106 79 / 0.3);
+        }
+        .btn-predict:hover {
+            background: #1b4332;
+            transform: scale(1.08);
+            box-shadow: 0 12px 20px rgb(27 67 50 / 0.5);
+        }
+        .input-group-text {
+            background: #e6f4ea;
+            color: #2d6a4f;
+            font-size: 18px;
+            border: none;
+            border-radius: 0 10px 10px 0;
+        }
+        .form-label {
+            font-weight: 700;
+            color: #1b4332;
+            letter-spacing: 0.03em;
+            user-select: none;
+        }
+        .tooltip-icon {
+            color: #40916c;
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+        .tooltip-icon:hover {
+            color: #1b4332;
+        }
+        .note {
+            font-size: 0.95rem;
+            color: #4a4a4a;
+            margin-top: 4px;
+            font-style: italic;
+            opacity: 0.75;
+            user-select: none;
+        }
+
+        /* Features section */
+        .features-section {
+            background: #e9f5ef;
+            padding: 40px 20px;
+            border-radius: 25px;
+            max-width: 1000px;
+            margin: 30px auto 50px auto;
+            box-shadow: 0 6px 25px rgb(0 0 0 / 0.05);
+            animation: fadeInUp 2.5s ease forwards;
+        }
+        .features-section h2 {
+            text-align: center;
+            color: #2d6a4f;
+            font-family: 'Roboto Slab', serif;
+            letter-spacing: 0.07em;
+            margin-bottom: 35px;
+            font-weight: 700;
+            user-select: none;
+        }
+        .feature-card {
+            background: white;
+            box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            color: #40916c;
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
+            height: 230px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: default;
+        }
+        .feature-card:hover {
+            box-shadow: 0 8px 18px rgb(0 0 0 / 0.2);
+            color: #2d6a4f;
+            transform: translateY(-6px);
+        }
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.85;
+            transition: opacity 0.4s ease;
+        }
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            user-select: none;
+        }
+        .feature-desc {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-family: 'Montserrat', sans-serif;
+            user-select: none;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            max-width: 1000px;
+            background: #fff;
+            padding: 40px 35px;
+            margin: 0 auto 50px auto;
+            border-radius: 25px;
+            box-shadow: 0 6px 25px rgb(0 0 0 / 0.05);
+            animation: fadeInUp 3s ease forwards;
+        }
+        .testimonials h2 {
+            font-family: 'Roboto Slab', serif;
+            text-align: center;
+            color: #2d6a4f;
+            margin-bottom: 40px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            user-select: none;
+        }
+        .testimonial-card {
+            border-left: 4px solid #2d6a4f;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            font-style: italic;
+            color: #444;
+            background: #f9fefb;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgb(0 0 0 / 0.03);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+        }
+        .testimonial-card:hover {
+            background: #e1f0dc;
+            box-shadow: 0 4px 20px rgb(0 0 0 / 0.1);
+        }
+        .testimonial-author {
+            margin-top: 12px;
+            font-weight: 600;
+            color: #1b4332;
+            font-size: 1.05rem;
+            user-select: none;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: auto;
+            background: #e9f5ef;
+            border-radius: 20px 20px 0 0;
+            color: #1b4332;
+            font-weight: 600;
+            letter-spacing: 0.07em;
+            box-shadow: 0 -3px 15px rgba(0,0,0,0.1);
+            font-family: 'Montserrat', sans-serif;
+            user-select: none;
+        }
+        footer p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 767px) {
+            .form-card, .features-section, .testimonials {
+                margin: 30px 15px 40px 15px;
+                padding: 30px 25px;
+            }
+            .feature-card {
+                height: auto;
+                padding: 20px 15px;
+            }
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1 id="mainTitle">🌾 Smart Crop Yield Predictor</h1>
+        <p id="subTitle">Enter your farm details to get scientific yield predictions &amp; advice</p>
+
+        <!-- Language Selector -->
+        <select id="languageSelect" class="language-selector">
+            <option value="en" selected>English</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="or">ଓଡ଼ିଆ (Odia)</option>
+            <option value="hi">हिंदी (Hindi)</option>
+        </select>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+        <form method="post">
+
+            <div class="accordion" id="formAccordion">
+
+                <!-- Farmer Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button id="farmerDetailsHeading" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#farmerDetails" aria-expanded="true">
+                            👨‍🌾 Farmer Details
+                        </button>
+                    </h2>
+                    <div id="farmerDetails" class="accordion-collapse collapse show" data-bs-parent="#formAccordion">
+                        <div class="accordion-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">State</label>
+                                    <input type="text" name="state" class="form-control" required>
+                                    <div class="note">E.g., Maharashtra, Tamil Nadu</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">District</label>
+                                    <input type="text" name="district" class="form-control" required>
+                                    <div class="note">Your farming district</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Crop Year</label>
+                                    <input type="number" name="crop_year" class="form-control" required>
+                                    <div class="note">E.g., 2024</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Season</label>
+                                    <select name="season" class="form-select" required>
+                                        <option value="">-- Select Season --</option>
+                                        <option>Kharif</option>
+                                        <option>Rabi</option>
+                                        <option>Zaid</option>
+                                    </select>
+                                    <div class="note">Choose based on cropping cycle</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soil & Weather -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button id="soilWeatherHeading" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#soilWeather">
+                            🌱 Soil &amp; Weather
+                        </button>
+                    </h2>
+                    <div id="soilWeather" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                        <div class="accordion-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Nitrogen (N)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">🌱</span>
+                                        <input type="number" name="N" class="form-control">
+                                    </div>
+                                    <div class="note">Nutrient level in soil</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Phosphorus (P)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">🌱</span>
+                                        <input type="number" name="P" class="form-control">
+                                    </div>
+                                    <div class="note">Essential for root growth</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Potassium (K)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">🌱</span>
+                                        <input type="number" name="K" class="form-control">
+                                    </div>
+                                    <div class="note">Helps in overall crop health</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Temperature (°C)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">🌡️</span>
+                                        <input type="number" step="0.1" name="temperature" class="form-control">
+                                    </div>
+                                    <div class="note">Average growing temperature</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Humidity (%)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">💧</span>
+                                        <input type="number" step="0.1" name="humidity" class="form-control">
+                                    </div>
+                                    <div class="note">Relative humidity</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Soil pH</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">⚗️</span>
+                                        <input type="number" step="0.1" name="ph" class="form-control">
+                                    </div>
+                                    <div class="note">Ideal range: 6.0 - 7.5</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Rainfall (mm)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">☔</span>
+                                        <input type="number" step="0.1" name="rainfall" class="form-control">
+                                    </div>
+                                    <div class="note">Approximate seasonal rainfall</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Soil Type</label>
+                                    <select name="soil_type" class="form-select">
+                                        <option>Sandy</option>
+                                        <option>Clay</option>
+                                        <option>Loamy</option>
+                                        <option>Black</option>
+                                        <option>Red</option>
+                                    </select>
+                                    <div class="note">Choose dominant soil type</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Soil Moisture (%)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">💦</span>
+                                        <input type="number" step="0.1" name="soil_moisture" class="form-control">
+                                    </div>
+                                    <div class="note">Field moisture capacity</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crop Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button id="cropDetailsHeading" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cropDetails">
+                            🌾 Crop Details
+                        </button>
+                    </h2>
+                    <div id="cropDetails" class="accordion-collapse collapse" data-bs-parent="#formAccordion">
+                        <div class="accordion-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Crop</label>
+                                    <input type="text" name="crop" class="form-control" required>
+                                    <div class="note">E.g., Wheat, Rice, Maize</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Area (Hectares)</label>
+                                    <input type="number" step="0.1" name="area" class="form-control" required>
+                                    <div class="note">Size of farmland in hectares</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+                <button id="predictBtn" type="submit" class="btn-predict">🔍 Predict Yield</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Features -->
+    <section class="features-section">
+        <h2 id="featuresHeading">🌟 Why Use Our Predictor?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Accurate ML Models</div>
+                    <div class="feature-desc">Trained on agricultural datasets for reliable predictions</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">🌦️</div>
+                    <div class="feature-title">Weather-Smart</div>
+                    <div class="feature-desc">Considers rainfall, humidity &amp; soil for precision</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">Farmer Friendly</div>
+                    <div class="feature-desc">Easy-to-use with simple interface</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <h2 id="testimonialsHeading">💬 Farmer Testimonials</h2>
+        <div class="testimonial-card">
+            “This tool helped me plan my crops better and increased my yield by 15%!”
+            <div class="testimonial-author">– Ramesh, Maharashtra</div>
+        </div>
+        <div class="testimonial-card">
+            “Accurate and simple to use. A must-have for every farmer.”
+            <div class="testimonial-author">– Kavitha, Tamil Nadu</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p id="footerText">🌱 Built for Farmers | Smart Agriculture Platform</p>
+    </footer>
+
+    <!-- Language Script -->
+    <script>
+        const translations = {
+            en: {
+                mainTitle: "🌾 Smart Crop Yield Predictor",
+                subTitle: "Enter your farm details to get scientific yield predictions & advice",
+                farmerDetailsHeading: "👨‍🌾 Farmer Details",
+                soilWeatherHeading: "🌱 Soil & Weather",
+                cropDetailsHeading: "🌾 Crop Details",
+                predictBtn: "🔍 Predict Yield",
+                featuresHeading: "🌟 Why Use Our Predictor?",
+                testimonialsHeading: "💬 Farmer Testimonials",
+                footerText: "🌱 Built for Farmers | Smart Agriculture Platform"
+            },
+            kn: {
+                mainTitle: "🌾 ಸ್ಮಾರ್ಟ್ ಬೆಳೆ ಉತ್ಪಾದನಾ ಭವಿಷ್ಯವಾಣಿ",
+                subTitle: "ನಿಮ್ಮ ಕೃಷಿ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ ವೈಜ್ಞಾನಿಕ ಫಲಿತಾಂಶಗಳನ್ನು ಪಡೆಯಿರಿ",
+                farmerDetailsHeading: "👨‍🌾 ರೈತ ವಿವರಗಳು",
+                soilWeatherHeading: "🌱 ಮಣ್ಣು ಮತ್ತು ಹವಾಮಾನ",
+                cropDetailsHeading: "🌾 ಬೆಳೆ ವಿವರಗಳು",
+                predictBtn: "🔍 ಉತ್ಪಾದನೆ ಭವಿಷ್ಯವಾಣಿ",
+                featuresHeading: "🌟 ನಮ್ಮ ಭವಿಷ್ಯವಾಣಿಯನ್ನು ಏಕೆ ಬಳಸಬೇಕು?",
+                testimonialsHeading: "💬 ರೈತರ ಅಭಿಪ್ರಾಯಗಳು",
+                footerText: "🌱 ರೈತರಿಗಾಗಿ ನಿರ್ಮಿಸಲಾಗಿದೆ | ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ವೇದಿಕೆ"
+            },
+            te: {
+                mainTitle: "🌾 స్మార్ట్ పంట దిగుబడి అంచనా",
+                subTitle: "మీ వ్యవసాయ వివరాలను నమోదు చేసి శాస్త్రీయ అంచనాలు పొందండి",
+                farmerDetailsHeading: "👨‍🌾 రైతు వివరాలు",
+                soilWeatherHeading: "🌱 నేల మరియు వాతావరణం",
+                cropDetailsHeading: "🌾 పంట వివరాలు",
+                predictBtn: "🔍 దిగుబడి అంచనా",
+                featuresHeading: "🌟 మా అంచనాకర్త ఎందుకు ఉపయోగించాలి?",
+                testimonialsHeading: "💬 రైతుల అభిప్రాయాలు",
+                footerText: "🌱 రైతుల కోసం రూపొందించబడింది | స్మార్ట్ వ్యవసాయ వేదిక"
+            },
+            or: {
+                mainTitle: "🌾 ସ୍ମାର୍ଟ ଫସଲ ଉତ୍ପାଦନ ପୂର୍ବାନୁମାନ",
+                subTitle: "ବୈଜ୍ଞାନିକ ପୂର୍ବାନୁମାନ ପାଇଁ ଆପଣଙ୍କ ଖେତିର ବିବରଣୀ ଦିଅନ୍ତୁ",
+                farmerDetailsHeading: "👨‍🌾 କୃଷକର ବିବରଣୀ",
+                soilWeatherHeading: "🌱 ମାଟି ଏବଂ ପାଗ",
+                cropDetailsHeading: "🌾 ଫସଲର ବିବରଣୀ",
+                predictBtn: "🔍 ଉତ୍ପାଦନ ପୂର୍ବାନୁମାନ",
+                featuresHeading: "🌟 ଆମର ପୂର୍ବାନୁମାନକୁ କାହିଁକି ବ୍ୟବହାର କରିବେ?",
+                testimonialsHeading: "💬 କୃଷକଙ୍କର ଅଭିମତ",
+                footerText: "🌱 କୃଷକଙ୍କ ପାଇଁ ତିଆରି | ସ୍ମାର୍ଟ କୃଷି ପ୍ଲାଟଫର୍ମ"
+            },
+            hi: {
+                mainTitle: "🌾 स्मार्ट फसल उपज भविष्यवाणी",
+                subTitle: "वैज्ञानिक भविष्यवाणी के लिए अपने खेत का विवरण दर्ज करें",
+                farmerDetailsHeading: "👨‍🌾 किसान विवरण",
+                soilWeatherHeading: "🌱 मिट्टी और मौसम",
+                cropDetailsHeading: "🌾 फसल विवरण",
+                predictBtn: "🔍 उपज का अनुमान लगाएँ",
+                featuresHeading: "🌟 हमारा भविष्यवक्ता क्यों इस्तेमाल करें?",
+                testimonialsHeading: "💬 किसानों की राय",
+                footerText: "🌱 किसानों के लिए बनाया गया | स्मार्ट कृषि प्लेटफॉर्म"
+            }
+        };
+
+        const languageSelect = document.getElementById('languageSelect');
+        const translatableIds = [
+            'mainTitle',
+            'subTitle',
+            'farmerDetailsHeading',
+            'soilWeatherHeading',
+            'cropDetailsHeading',
+            'predictBtn',
+            'featuresHeading',
+            'testimonialsHeading',
+            'footerText'
+        ];
+
+        languageSelect.addEventListener('change', function() {
+            const lang = this.value;
+            translatableIds.forEach(id => {
+                document.getElementById(id).textContent = translations[lang][id];
+            });
+        });
+    </script>
+
+</body>
+</html>

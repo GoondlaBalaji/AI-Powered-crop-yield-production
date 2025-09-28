@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Yield Prediction Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f7f7f7;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 40px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2d6a4f;
+        }
+        .section {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .section h4 {
+            color: #1b4332;
+            margin-bottom: 15px;
+        }
+        .result-item {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #2d6a4f;
+        }
+        .btn-back {
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🌾 Crop Yield Prediction Report</h2>
+
+        <!-- Selected Crop Section -->
+        <div class="section">
+            <h4>✅ Selected Crop</h4>
+            <p class="result-item"><b>Crop:</b> <span class="highlight">{{ result.selected_crop }}</span></p>
+            <p class="result-item"><b>Expected Yield:</b> {{ result.sel_yield }} kg/ha</p>
+            <p class="result-item"><b>Recommended Fertilizer:</b> {{ result.fert_name_sel }}</p>
+            <p class="result-item"><b>Boost from Fertilizer:</b> +{{ result.fert_gain_sel }}%</p>
+            <p class="result-item"><b>Final Adjusted Yield:</b> <span class="highlight">{{ result.final_yield_sel }} kg/ha</span></p>
+        </div>
+
+        <!-- Alternative Crop Section -->
+        <div class="section">
+            <h4>🌱 Alternative Crop Suggestion</h4>
+            <p class="result-item"><b>Crop:</b> <span class="highlight">{{ result.alt_crop }}</span></p>
+            <p class="result-item"><b>Expected Yield:</b> {{ result.alt_yield }} kg/ha</p>
+            <p class="result-item"><b>Recommended Fertilizer:</b> {{ result.fert_name_alt }}</p>
+            <p class="result-item"><b>Boost from Fertilizer:</b> +{{ result.fert_gain_alt }}%</p>
+            <p class="result-item"><b>Final Adjusted Yield:</b> <span class="highlight">{{ result.final_yield_alt }} kg/ha</span></p>
+            <p class="result-item"><b>Difference vs Selected Crop:</b> {{ result.diff_pct_alt }}%</p>
+        </div>
+
+        <!-- Seasonal Advice -->
+        <div class="section">
+            <h4>📢 Farming Advice</h4>
+            <ul>
+                <li>Season: <b>{{ season }}</b></li>
+                <li>Irrigate twice per week (based on weather)</li>
+                <li>Watch out for pest alerts in {{ season }} season</li>
+            </ul>
+        </div>
+
+        <a href="/" class="btn btn-success btn-back">🔙 Back to Input Form</a>
+    </div>
+
+</body>
+</html>
